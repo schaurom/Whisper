@@ -9,3 +9,4 @@ result = model.transcribe("./audio/audio.mp3", **options)
 print(result["text"])
 
 np.savetxt("./audio/audio_transcript.csv", result["text"])
+#
