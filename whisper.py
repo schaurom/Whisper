@@ -1,5 +1,5 @@
 import whisper
-import numpy as np
+import pandas as pd
 
 model = whisper.load_model("medium")
 
@@ -8,5 +8,5 @@ result = model.transcribe("./audio/audio.mp3", **options)
 #result = model.transcribe(r"C:\Users\schau\PycharmProjects\Whisper\whisper\audio.mp3", **options)
 print(result["text"])
 
-np.savetxt("./audio/audio_transcript.csv", result["text"])
-#
+df = pd.DataFrame(result["text"])
+df.to_csv("./audio/audio_transcript.csv", index=False)
