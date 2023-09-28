@@ -30,7 +30,13 @@ dateiname = "./audio/audio_transcript.docx"
 
 # erstelle ein neues Word Dokument
 dokument = Document()
+
+# Fügen Sie den Text in das Dokument ein und spezifizieren Sie die Schriftgröße
+absatz = dokument.add_paragraph()
+lauf = absatz.add_run(result_text)
+lauf.font.size = Pt(14)  # Ändern Sie die Schriftgröße auf 14 Pt
+
 # Fügen Sie den Text in das Dokument ein
-dokument.add_paragraph(result_text)
+#dokument.add_paragraph(result_text)
 # Speichern Sie das Dokument in einer Datei
 dokument.save(dateiname)
