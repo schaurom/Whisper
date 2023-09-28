@@ -14,10 +14,12 @@ print(result_text)
 # Definieren Sie den Dateinamen, unter dem Sie die CSV-Datei speichern möchten
 dateiname = "./audio/audio_transcript.csv"
 
-# Öffnen Sie die Datei im Schreibmodus und geben Sie an, dass es sich um eine CSV-Datei handelt
+# Öffne die Datei im Schreibmodus
+# mode='w' --> Datei wird überschrieben
+# mode='a' --> append --> neue Daten werden in der bestehenden Datei unten drangehängt
 with open(dateiname, mode='w', newline='') as csv_datei:
     csv_schreiber = csv.writer(csv_datei)
 
-    # Schreiben Sie den Text in die CSV-Datei
+    # Text in CSV Datei schreiben
     csv_schreiber.writerow([result_text])
 
