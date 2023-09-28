@@ -1,5 +1,6 @@
 import whisper
 import csv
+from docx import Document
 
 model = whisper.load_model("medium")
 
@@ -11,6 +12,8 @@ result = model.transcribe("./audio/audio.mp3", **options)
 result_text = result["text"]
 print(result_text)
 
+#----------------------------------------------------------------------------------------------------------------
+# CSV
 # Definieren Sie den Dateinamen, unter dem Sie die CSV-Datei speichern möchten
 dateiname = "./audio/audio_transcript.csv"
 
@@ -22,4 +25,13 @@ with open(dateiname, mode='w', newline='') as csv_datei:
 
     # Text in CSV Datei schreiben
     csv_schreiber.writerow([result_text])
+#----------------------------------------------------------------------------------------------------------------
+# Word
+dateiname = "./audio/audio_transcript.docx"
 
+# erstelle ein neues Word Dokument
+dokument = Document()
+# Fügen Sie den Text in das Dokument ein
+dokument.add_paragraph(result_text)
+# Speichern Sie das Dokument in einer Datei
+dokument.save(dateiname)
