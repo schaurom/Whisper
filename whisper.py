@@ -22,7 +22,6 @@ dateiname = "./audio/audio_transcript.csv"
 # mode='a' --> append --> neue Daten werden in der bestehenden Datei unten drangehängt
 with open(dateiname, mode='w', newline='') as csv_datei:
     csv_schreiber = csv.writer(csv_datei)
-
     # Text in CSV Datei schreiben
     csv_schreiber.writerow([result_text])
 #----------------------------------------------------------------------------------------------------------------
