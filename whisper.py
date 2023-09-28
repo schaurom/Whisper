@@ -1,6 +1,11 @@
 import whisper
 import csv
 from docx import Document
+from docx.shared import Pt
+import time
+
+# Startzeit für Programm-laufzeit
+startzeit = time.time()
 
 model = whisper.load_model("medium")
 
@@ -40,3 +45,10 @@ lauf.font.size = Pt(14)  # Ändern Sie die Schriftgröße auf 14 Pt
 #dokument.add_paragraph(result_text)
 # Speichern Sie das Dokument in einer Datei
 dokument.save(dateiname)
+
+
+# Endzeit für Programm-laufzeit
+endzeit = time.time()
+# Die Laufzeit berechnen (in Sekunden)
+laufzeit = endzeit - startzeit
+print(f"Die Laufzeit des Programms beträgt {laufzeit:.2f} Sekunden.")
