@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whisper Transkription</title>
+    <!-- Fügen Sie Bootstrap-CSS hinzu (entweder lokal oder über ein CDN) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Whisper Transkription</h1>
+        <div class="custom-file mb-3">
+            <input type="file" class="custom-file-input" id="customFile" accept=".wav" required>
+            <label class="custom-file-label" for="customFile">Audiodatei auswählen</label>
+        </div>
+        <button type="button" class="btn btn-primary mb-3">Transkribieren und Herunterladen</button>
+
+        {% if error %}
+        <p class="text-danger">{{ error }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Fügen Sie Bootstrap-JavaScript hinzu (entweder lokal oder über ein CDN) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
