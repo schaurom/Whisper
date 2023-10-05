@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
     <div class="container mt-5">
         <h1 class="mb-4">Whisper Transkription</h1>
         <div class="custom-file mb-3">
-            <input type="file" class="custom-file-input" id="customFile" accept=".wav" required>
+            <input type="file" class="custom-file-input" id="customFile" accept=".mp3, .wav" required>
             <label class="custom-file-label" for="customFile">Audiodatei auswählen</label>
         </div>
         <button type="button" class="btn btn-primary mb-3">Transkribieren und Herunterladen</button>
@@ -21,10 +21,65 @@
         {% if error %}
         <p class="text-danger">{{ error }}</p>
         {% endif %}
+
+        {% if warning %}
+        <p class="text-warning">{{ warning }}</p>
+        {% endif %}
     </div>
 
     <!-- Fügen Sie Bootstrap-JavaScript hinzu (entweder lokal oder über ein CDN) -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Fügen Sie diese Zeilen am Ende Ihres HTML-Bodys hinzu -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Warten Sie, bis die DOM vollständig geladen ist
+
+            // Holen Sie sich den Dateieingabebereich
+            const fileInput = document.getElementById('customFile');
+
+            // Holen Sie sich den Button
+            const transcribeButton = document.querySelector('.btn-primary');
+
+            // Fügen Sie einen Event-Listener zum Button hinzu
+            transcribeButton.addEventListener('click', function () {
+                // Überprüfen Sie, ob eine Datei ausgewählt wurde
+                if (fileInput.files.length > 0) {
+                    // Holen Sie sich die ausgewählte Datei
+                    const file = fileInput.files[0];
+
+                    // Erstellen Sie ein FormData-Objekt
+                    const formData = new FormData();
+
+                    // Fügen Sie die Datei zum FormData-Objekt hinzu
+                    formData.append('file', file);
+
+                    // Senden Sie eine POST-Anfrage mit der ausgewählten Datei an den Server
+                    fetch('/transcribe', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Zeigen Sie die Transkription oder Fehlermeldung an
+                        if (data.transcription) {
+                            alert('Transkription: ' + data.transcription);
+                        } else if (data.error) {
+                            alert('Fehler: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fehler:', error);
+                    });
+                } else {
+                    // Wenn keine Datei ausgewählt wurde, zeigen Sie eine Fehlermeldung an
+                    alert('Bitte wählen Sie eine Datei aus.');
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>
+
