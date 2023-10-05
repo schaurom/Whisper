@@ -59,17 +59,23 @@ def transcribe():
             return render_template('index.html',
                                    warning='Transkription erfolgreich, aber es gab Warnungen oder Hinweise während des Prozesses')
 
-@app.route('/download')
 def download():
     # Dateipfad zur temporären Textdatei aus der Sitzung abrufen
     output_file_path = session.pop('output_file_path', None)
 
     if output_file_path:
-        # Transkriptionsdatei zum Download bereitstellen
-        return send_file(output_file_path, as_attachment=True, download_name='transcription.txt')
+        try:
+            # Transkriptionsdatei zum Download bereitstellen
+            response = send_file(output_file_path, as_attachment=True, download_name='transcription.txt')
+        finally:
+            # Datei nach dem Download löschen, egal ob der Download erfolgreich war oder nicht
+            os.remove(output_file_path)
+
+        return response
 
     # Wenn kein Dateipfad vorhanden ist, zeigen Sie eine Fehlermeldung an
     return render_template('index.html', error='Transkription nicht verfügbar.')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
