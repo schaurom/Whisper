@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whisper Transkription</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-file-input {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Whisper Transkription</h1>
+        <form action="/transcribe" method="post" enctype="multipart/form-data">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="customFile" name="file" accept=".mp3, .wav" required>
+                <label class="custom-file-label" for="customFile">Audiodatei auswählen</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Transkribieren</button>
+        </form>
+
+        {% if status %}
+            <p>{{ status }}</p>
+        {% endif %}
+
+        {% if error %}
+            <p>{{ error }}</p>
+        {% endif %}
+
+        {% if warning %}
+            <p>{{ warning }}</p>
+        {% endif %}
+
+        {% if success %}
+            <p>{{ success }}</p>
+            <a href="{{ url_for('download') }}" download>Transkription Herunterladen</a>
+        {% elif error %}
+            <p class="text-danger">{{ error }}</p>
+        {% endif %}
+
+
+    </div>
+</body>
+
+</html>
