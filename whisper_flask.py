@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template, send_file
+from flask import Flask, request, render_template, send_file, session
 import tempfile
 import whisper
 from dotenv import load_dotenv
@@ -16,9 +16,11 @@ model = whisper.load_model("medium")
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    print('Seite geladen')
+    #render_template('index.html', status='Seite geladen')
+    return render_template('index.html', status='Seite geladen')
 
-@app.route('/transcribe', methods=['POST'])
+@app.route('/transcribe', methods=['POST', 'GET'])
 def transcribe():
         # Überprüfen, ob eine Datei hochgeladen wurde
         if 'file' not in request.files:
@@ -31,13 +33,18 @@ def transcribe():
         # Speichern Sie die hochgeladene Datei vorübergehend
         audio_file_path = tempfile.mktemp(suffix=".mp3")
         file.save(audio_file_path)
+        print('Datei hochgeladen und gespeichert unter: ' + audio_file_path)
+        render_template('output.html', status='Datei hochgeladen und gespeichert unter: ' + audio_file_path)
 
         # Transkribieren Sie die Audiodatei
+        render_template('output.html', status='Transkription Start')
         options = {"language": "de"}
         response = model.transcribe(audio_file_path, **options)
+        #Statusmeldung ausgeben
+        render_template('output.html', status='Transkription abgeschlossen')
 
         # Extrahieren Sie die Transkription aus der Antwort
-        transcription_text = response.get("transcription")
+        transcription_text = response.get('text')
 
         if transcription_text:
             # Text in eine temporäre Datei schreiben
@@ -45,8 +52,12 @@ def transcribe():
             with open(output_file_path, 'w') as output_file:
                 output_file.write(transcription_text)
 
+            print(output_file_path)
+            render_template('output.html', status='Text in Datei gespeichert unter: ' + output_file_path)
+
             # Hochgeladene Audiodatei löschen (temporäre Textdatei nicht löschen, bis der Benutzer sie heruntergeladen hat)
             os.remove(audio_file_path)
+            render_template('output.html', status='Audiodatei gelöscht: ' + audio_file_path)
 
             # Dateipfad zur temporären Textdatei für den Download speichern
             session['output_file_path'] = output_file_path
@@ -59,6 +70,7 @@ def transcribe():
             return render_template('index.html',
                                    warning='Transkription erfolgreich, aber es gab Warnungen oder Hinweise während des Prozesses')
 
+@app.route('/download')
 def download():
     # Dateipfad zur temporären Textdatei aus der Sitzung abrufen
     output_file_path = session.pop('output_file_path', None)
