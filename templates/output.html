@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+            <p class="text-info">{{ status }}</p>
+
+
+
+            <p class="text-danger">{{ error }}</p>
+
+
+
+            <p class="text-warning">{{ warning }}</p>
+
+
+            <!-- Zeigen Sie den Download-Button an, wenn eine Transkription vorhanden ist -->
+            <a href="{{ url_for('download') }}" class="btn btn-success mb-3" download>Transkription Herunterladen</a>
+
+</body>
+</html>
