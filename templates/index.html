@@ -25,6 +25,12 @@
         {% if warning %}
         <p class="text-warning">{{ warning }}</p>
         {% endif %}
+
+        {% if transcription %}
+        <!-- Zeigen Sie den Download-Button an, wenn eine Transkription vorhanden ist -->
+        <a href="{{ url_for('download') }}" class="btn btn-success mb-3" download>Transkription Herunterladen</a>
+        {% endif %}
+
     </div>
 
     <!-- Fügen Sie Bootstrap-JavaScript hinzu (entweder lokal oder über ein CDN) -->
