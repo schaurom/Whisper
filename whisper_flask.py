@@ -1,15 +1,17 @@
 import os
 from flask import Flask, request, render_template, send_file
 import tempfile
-import torch
-#from transformers import WhisperForConditionalGeneration, WhisperTokenizer
 import whisper
+from dotenv import load_dotenv
+
+# Lade Umgebungsvariablen aus der .env-Datei
+load_dotenv()
 
 app = Flask(__name__)
+# Setzen Sie den geheimen Schlüssel für die Sitzung aus der Umgebungsvariablen-Datei .env
+app.secret_key = os.getenv('SECRET_KEY')
 
-# Laden Sie das Whisper-Modell und den Tokenizer
-#model = WhisperForConditionalGeneration.from_pretrained("facebook/whisper-large")
-#tokenizer = WhisperTokenizer.from_pretrained("facebook/whisper-large")
+# Laden Sie das Whisper-Modell
 model = whisper.load_model("medium")
 
 @app.route('/')
@@ -43,19 +45,31 @@ def transcribe():
             with open(output_file_path, 'w') as output_file:
                 output_file.write(transcription_text)
 
-            # Datei zum Download bereitstellen
-            response = send_file(output_file_path, as_attachment=True, download_name='transcription.txt')
-
-            # Hochgeladene Audiodatei und temporäre Textdatei löschen
+            # Hochgeladene Audiodatei löschen (temporäre Textdatei nicht löschen, bis der Benutzer sie heruntergeladen hat)
             os.remove(audio_file_path)
-            os.remove(output_file_path)
 
-            return response
+            # Dateipfad zur temporären Textdatei für den Download speichern
+            session['output_file_path'] = output_file_path
+
+            return render_template('index.html',
+                                   success='Transkription erfolgreich! Klicken Sie auf den Download-Button, um die Transkription herunterzuladen.')
+
         else:
-            # Wenn keine Transkription vorhanden ist, geben Sie einen Fehler zurück
-            return render_template('index.html', error='Transkription fehlgeschlagen', warning='Transkription erfolgreich, aber es gab Warnungen oder Hinweise während des Prozesses')
+            # Wenn keine Transkription vorhanden ist, geben Sie einen Warnhinweis zurück
+            return render_template('index.html',
+                                   warning='Transkription erfolgreich, aber es gab Warnungen oder Hinweise während des Prozesses')
 
+@app.route('/download')
+def download():
+    # Dateipfad zur temporären Textdatei aus der Sitzung abrufen
+    output_file_path = session.pop('output_file_path', None)
 
+    if output_file_path:
+        # Transkriptionsdatei zum Download bereitstellen
+        return send_file(output_file_path, as_attachment=True, download_name='transcription.txt')
+
+    # Wenn kein Dateipfad vorhanden ist, zeigen Sie eine Fehlermeldung an
+    return render_template('index.html', error='Transkription nicht verfügbar.')
 
 if __name__ == '__main__':
     app.run(debug=True)
