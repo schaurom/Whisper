@@ -14,7 +14,7 @@ app.secret_key = os.getenv('SECRET_KEY')
 html_template = 'index_simple.html'
 
 # Laden Sie das Whisper-Modell
-model = whisper.load_model("medium")
+model = whisper.load_model("medium", download_root='.\models')
 
 @app.route('/')
 def index():
