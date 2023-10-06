@@ -13,17 +13,21 @@
 
     <div class="container mt-5">
         <h1 class="mb-4">Whisper Transkription</h1>
-        <div class="custom-file mb-3">
+        <div class="input-group">
+          <input type="file" class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" accept=".mp3, .wav" required>
+          <button class="btn btn-primary mb-3" type="button" id="inputGroupFileAddon04">Upload/Transcribe</button>
+        </div>
+<!--        <div class="custom-file mb-3">
             <input type="file" class="custom-file-input" id="customFile" accept=".mp3, .wav" required>
             <label class="custom-file-label" for="customFile">Audiodatei auswählen</label>
         </div>
-        <button type="button" class="btn btn-primary mb-3">Transkribieren und Herunterladen</button>
+        <button type="button" class="btn btn-primary mb-3">Transkribieren und Herunterladen</button>-->
 
         <!-- {{ status }} -->
 
-        {% if status %}
-            <p class="text-info">{{ status }}</p>
-        {% endif %}
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-info">{{ message }}</div>
+        {% endfor %}
 
         {% if error %}
             <p class="text-danger">{{ error }}</p>
@@ -48,8 +52,8 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Warten Sie, bis die DOM vollständig geladen ist
 
-            // Holen Sie sich den Dateieingabebereich
-            const fileInput = document.getElementById('customFile');
+            // Holen Sie sich den Dateieingabebereich (ID des Buttons)
+            const fileInput = document.getElementById('inputGroupFile04');
 
             // Holen Sie sich den Button
             const transcribeButton = document.querySelector('.btn-primary');
