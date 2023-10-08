@@ -7,9 +7,9 @@ import time
 # Startzeit für Programm-laufzeit
 startzeit = time.time()
 
-model = whisper.load_model("medium")
+model = whisper.load_model("tiny", download_root='.\models')
 
-options = {"language": "de"}
+options = {"language": "de", "verbose": "true", "word_timestamps": "true", "append_punctuations": "."}
 result = model.transcribe("./audio/audio.mp3", **options)
 #result = model.transcribe(r"C:\Users\schau\PycharmProjects\Whisper\whisper\audio.mp3", **options)
 
