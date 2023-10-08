@@ -1,6 +1,5 @@
 import os
-from flask import Flask, request, render_template, send_file, session, flash
-from flask_socketio import SocketIO
+from flask import Flask, request, render_template, send_file, session
 import tempfile
 import whisper
 from dotenv import load_dotenv
@@ -9,19 +8,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-socketio = SocketIO(app)
-
 # Setzen Sie den geheimen Schlüssel für die Sitzung aus der Umgebungsvariablen-Datei .env
 app.secret_key = os.getenv('SECRET_KEY')
-html_template = 'index.html'
-#html_template = 'index_simple.html'
+#html_template = 'index.html'
+html_template = 'index_simple.html'
 
 # Laden Sie das Whisper-Modell
 model = whisper.load_model("tiny", download_root='.\models')
 
 @app.route('/')
 def index():
-    return render_template(html_template)
+    print('Seite geladen')
+    #render_template(html_template, status='Seite geladen')
+    return render_template(html_template, status='Seite geladen')
 
 @app.route('/transcribe', methods=['POST', 'GET'])
 def transcribe():
@@ -37,14 +36,14 @@ def transcribe():
         audio_file_path = tempfile.mktemp(suffix=".mp3")
         file.save(audio_file_path)
         print('Datei hochgeladen und gespeichert unter: ' + audio_file_path)
-        flash('Datei hochgeladen und gespeichert unter: ' + audio_file_path, 'success')
+        render_template(html_template, status='Datei hochgeladen und gespeichert unter: ' + audio_file_path)
 
         # Transkribieren Sie die Audiodatei
-        flash('Transkription Start', 'success')
-        options = {"language": "de", "verbose": "true"}
+        render_template(html_template, status='Transkription Start')
+        options = {"language": "de"}
         response = model.transcribe(audio_file_path, **options)
         #Statusmeldung ausgeben
-        flash('Transkription abgeschlossen', 'success')
+        render_template(html_template, status='Transkription abgeschlossen')
 
         # Extrahieren Sie die Transkription aus der Antwort
         transcription_text = response.get('text')
@@ -56,11 +55,11 @@ def transcribe():
                 output_file.write(transcription_text)
 
             print(output_file_path)
-            flash('Text in Datei gespeichert unter: ' + output_file_path, 'success')
+            render_template(html_template, status='Text in Datei gespeichert unter: ' + output_file_path)
 
             # Hochgeladene Audiodatei löschen (temporäre Textdatei nicht löschen, bis der Benutzer sie heruntergeladen hat)
             os.remove(audio_file_path)
-            flash('Audiodatei gelöscht: ' + audio_file_path, 'success')
+            render_template(html_template, status='Audiodatei gelöscht: ' + audio_file_path)
 
             # Dateipfad zur temporären Textdatei für den Download speichern
             session['output_file_path'] = output_file_path
@@ -91,5 +90,4 @@ def download():
 
 
 if __name__ == '__main__':
-    #app.run(debug=True)
-    app.run()
+    app.run(debug=True)
