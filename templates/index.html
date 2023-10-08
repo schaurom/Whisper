@@ -23,10 +23,19 @@
         </div>
         <button type="button" class="btn btn-primary mb-3">Transkribieren und Herunterladen</button>-->
 
-        <!-- {{ status }} -->
+<!--        über den Befehl "flash()" können hierher Nachrichten gesendet werden -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
         {% for message in get_flashed_messages() %}
-            <div class="alert alert-info">{{ message }}</div>
+            {{ message }}
         {% endfor %}
 
         {% if error %}
@@ -96,6 +105,26 @@
         });
     </script>
 
+    <!-- Einrichten einer <div>-Element, um den Fortschritt anzuzeigen -->
+    <div id="progress"></div>
+
+    <!-- Fügen Sie die SocketIO-Bibliothek hinzu -->
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+
+    <script type="text/javascript">
+        // Verbinden Sie sich mit dem SocketIO-Server
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        // Hören Sie auf das 'transcribe_response'-Ereignis
+        socket.on('transcribe_response', function(msg) {
+            // Aktualisieren Sie das Fortschritts-DOM-Element mit den erhaltenen Daten
+            var progressElement = document.getElementById('progress');
+            progressElement.innerText = 'Fortschritt: ' + msg.data;
+
+            // Hier können Sie das Ergebnis auch auf andere Weise anzeigen, z.B.
+            // durch Hinzufügen von Fortschrittsbalken, Aktualisieren von Bildern usw.
+        });
+    </script>
 </body>
 
 </html>
