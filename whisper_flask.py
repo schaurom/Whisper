@@ -9,7 +9,7 @@ load_dotenv()
 
 app = Flask(__name__)
 # Setzen Sie den geheimen Schlüssel für die Sitzung aus der Umgebungsvariablen-Datei .env
-app.secret_key = os.getenv('SECRET_KEY')
+app.secret_key = os.getenv('FLASK_SECRET_KEY')
 #html_template = 'index.html'
 html_template = 'index_simple.html'
 
