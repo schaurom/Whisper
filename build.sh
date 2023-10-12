@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Aktualisiere pip und installiere Abhängigkeiten
-pip install --upgrade pip
-pip install -r requirements.txt
+##pip install --upgrade pip
+##pip install -r requirements.txt
 
 # Führe Datenbankmigrationen durch (falls zutreffend)
 # python manage.py db upgrade
@@ -15,7 +15,7 @@ pip install -r requirements.txt
 
 # Starte die Flask-Anwendung (verwende den richtigen Befehl für deine Anwendung)
 # python meincode.py oder gunicorn meincode:app
-python app.py
+##python app.py
 
 # Du kannst auch hier spezifische Umgebungsvariablen oder Konfigurationen setzen
 # export FLASK_ENV=production
