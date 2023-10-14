@@ -3,6 +3,7 @@ from flask import Flask, request, render_template, send_file, session
 import tempfile
 import whisper
 from dotenv import load_dotenv
+import webbrowser
 
 # Lade Umgebungsvariablen aus der .env-Datei
 load_dotenv()
@@ -90,5 +91,7 @@ def download():
 
 
 if __name__ == '__main__':
+    # Öffne den Browser und navigiere zur Anwendungsseite
+    webbrowser.open('http://localhost:5000')
     #app.run(debug=True)
     app.run()
