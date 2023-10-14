@@ -7,14 +7,11 @@ from docx import Document
 from docx.shared import Pt
 import time
 
-
-
 def run_whisper(audio_file_path, output_file_path):
     # Startzeit für Programm-laufzeit
     startzeit = time.time()
 
     model = whisper.load_model("tiny", download_root='.\models')
-
     options = {"language": "de", "verbose": "true", "word_timestamps": "true", "append_punctuations": "."}
     result = model.transcribe(audio_file_path, **options)
 
@@ -62,13 +59,14 @@ def transcribe_audio():
 root = tk.Tk()
 root.title("Whisper Transkription")
 # Set the width and height of the main window
-window_width = 600  # Set your desired width
-window_height = 200  # Set your desired height
+window_width = 400  # Set your desired width
+window_height = 100  # Set your desired height
 root.geometry(f"{window_width}x{window_height}")
 
 # Button zum Auswählen der Audiodatei
 select_file_button = tk.Button(root, text="Audiodatei auswählen und transkribieren", command=transcribe_audio)
 select_file_button.pack(padx=20, pady=20)
+
 
 # Tkinter Hauptloop starten
 root.mainloop()
