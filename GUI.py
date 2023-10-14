@@ -1,68 +1,74 @@
 # grafische Oberfläche zum Auswählen von Dateien
 
-#-----------------------------------------------------------------------
-# Absprung in whisper.py funktioniert noch nicht
-#-----------------------------------------------------------------------
-
 import tkinter as tk
-from tkinter import filedialog
-from tkinter import messagebox
-import subprocess
+from tkinter import filedialog, messagebox
+import whisper
 from docx import Document
+from docx.shared import Pt
+import time
 
 
-def browse_file():
-    file_path = filedialog.askopenfilename(filetypes=[("MP3 files", "*.mp3")])
-    if file_path:
-        selected_file_label.config(text=f"Selected File: {file_path}")
+
+def run_whisper(audio_file_path, output_file_path):
+    # Startzeit für Programm-laufzeit
+    startzeit = time.time()
+
+    model = whisper.load_model("tiny", download_root='.\models')
+
+    options = {"language": "de", "verbose": "true", "word_timestamps": "true", "append_punctuations": "."}
+    result = model.transcribe(audio_file_path, **options)
+
+    #Inhalt in Variable schreiben
+    result_text = result["text"]
+    print(result_text)
+
+    # Word
+    dateiname = output_file_path
+
+    # erstelle ein neues Word Objekt
+    dokument = Document()
+
+    # Fügen Sie den Text in das Dokument ein und spezifizieren Sie die Schriftgröße
+    absatz = dokument.add_paragraph()
+    lauf = absatz.add_run(result_text)
+    lauf.font.size = Pt(14)  # Ändern Sie die Schriftgröße auf 14 Pt
+
+    # Speichern Sie das Dokument in einer Datei
+    dokument.save(dateiname)
+
+    # Endzeit für Programm-laufzeit
+    endzeit = time.time()
+    # Die Laufzeit berechnen (in Sekunden)
+    laufzeit = endzeit - startzeit
+    print(f"Die Laufzeit des Programms beträgt {laufzeit:.2f} Sekunden.")
 
 
-def save_docx():
-    file_path = filedialog.asksaveasfilename(defaultextension=".docx", filetypes=[("Word documents", "*.docx")])
-    if file_path:
+def transcribe_audio():
+    audio_file_path = filedialog.askopenfilename(filetypes=[("Audio files", "*.mp3")])
+    if audio_file_path:
+        output_file_path = audio_file_path.replace(".mp3", "_transcript.docx")
         try:
-            # Create a new Word document
-            doc = Document()
+            # Transkription mit "whisper" durchführen
+            run_whisper(audio_file_path, output_file_path)
 
-            # Add content to the document (you can customize this part)
-            doc.add_heading('My Document', 0)
-            doc.add_paragraph('This is a sample Word document.')
-
-            # Save the document
-            doc.save(file_path)
-
-            messagebox.showinfo("Info", f"Document saved as: {file_path}")
+            # Meldung anzeigen
+            messagebox.showinfo("Erfolg", f"Transkription abgeschlossen. Ergebnis wurde in {output_file_path} gespeichert.")
         except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+            print(str(e))
+            messagebox.showerror("Fehler", f"Fehler bei der Transkription: {str(e)}")
 
 
-def run_whisper():
-    try:
-        subprocess.run(["python", "whisper.py"])
-    except Exception as e:
-        messagebox.showerror("Error", f"An error occurred: {str(e)}")
-
-
-# Create the main window
+# Hauptfenster erstellen
 root = tk.Tk()
-root.title("MP3 File Selector, Word Document Saver, and Whisper Runner")
-
+root.title("Whisper Transkription")
 # Set the width and height of the main window
-window_width = 400  # Set your desired width
+window_width = 600  # Set your desired width
 window_height = 200  # Set your desired height
 root.geometry(f"{window_width}x{window_height}")
 
-# Create and configure widgets
-browse_button = tk.Button(root, text="Browse MP3 File", command=browse_file)
-selected_file_label = tk.Label(root, text="Selected File: None")
-save_docx_button = tk.Button(root, text="Save Word Doc", command=save_docx)
-run_whisper_button = tk.Button(root, text="Run Whisper", command=run_whisper)
+# Button zum Auswählen der Audiodatei
+select_file_button = tk.Button(root, text="Audiodatei auswählen und transkribieren", command=transcribe_audio)
+select_file_button.pack(padx=20, pady=20)
 
-# Pack widgets
-browse_button.pack(pady=10)
-selected_file_label.pack()
-save_docx_button.pack(pady=10)
-run_whisper_button.pack(pady=10)
-
-# Start the main loop
+# Tkinter Hauptloop starten
 root.mainloop()
