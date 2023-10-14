@@ -29,7 +29,15 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
+
+      - task: CopyFiles@2
+        displayName: 'Copy Files to: $(Build.BinariesDirectory)'
+        inputs:
+          TargetFolder: '$(Build.BinariesDirectory)'
+
+      - task: ArchiveFiles@2
+        displayName: 'Archive $(Build.BinariesDirectory)'
+  
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       
       - name: Upload artifact for deployment jobs
@@ -39,7 +47,7 @@ jobs:
           path: |
             . 
             !venv/
-
+      
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -61,3 +69,6 @@ jobs:
           app-name: 'Whisper-schaurom'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_95A3F63E16604C30AC223B3036412C1E }}
+
+        StartupCommand: 'gunicorn --bind=0.0.0.0 --workers=4 app:app'
+        
