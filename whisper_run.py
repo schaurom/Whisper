@@ -4,6 +4,7 @@ from docx import Document
 from docx.shared import Pt
 import time
 
+
 # Startzeit für Programm-laufzeit
 startzeit = time.time()
 
